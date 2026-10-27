@@ -1,0 +1,12 @@
+Local OCR components
+
+Tesseract.js 6.0.1 — https://github.com/naptha/tesseract.js
+Tesseract.js-core 6.0.0 — https://github.com/naptha/tesseract.js-core
+Apache License 2.0; included license and bundled dependency notices apply.
+
+Japanese and English traineddata are distributed by
+@tesseract.js-data/jpn 1.0.0 and @tesseract.js-data/eng 1.0.0
+https://github.com/naptha/tessdata
+Models originate from the Tesseract OCR project:
+https://github.com/tesseract-ocr/tessdata_best
+Apache License 2.0 (see LICENSE-core).
