@@ -16,7 +16,7 @@ const categories=[
 {id:'bonus',name:'賞与',icon:'spark',color:'#3e7a60',bg:'#eaf3e9',type:'income'},
 {id:'otherIncome',name:'その他の収入',icon:'wallet',color:'#3e7a60',bg:'#eaf3e9',type:'income'}];
 const payments=['現金','クレジットカード','銀行口座','電子マネー','その他'];
-const empty=()=>({version:1,transactions:[],budgets:{},recurring:[]});
+const empty=()=>({version:1,transactions:[],budgets:{},recurring:[],stocks:[],stockEvents:[]});
 function validDate(s){if(typeof s!=='string'||!/^20\d{2}-\d{2}-\d{2}$|^2100-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T12:00:00Z');return !isNaN(d)&&d.toISOString().slice(0,10)===s}
 function validMonth(s){return typeof s==='string'&&/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(s)}
 function shiftMonth(month,offset){const [y,m]=month.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+offset,1));return d.toISOString().slice(0,7)}
@@ -26,10 +26,15 @@ function summarize(data,month){const rows=monthRows(data,month);const income=row
 const validId=id=>typeof id==='string'&&/^[a-zA-Z0-9_-]{1,100}$/.test(id);
 const validAmount=n=>Number.isSafeInteger(n)&&n>0&&n<=999999999;
 function validEntry(t){return t&&validId(t.id)&&['income','expense'].includes(t.type)&&categories.some(c=>c.id===t.category&&c.type===t.type)&&validAmount(t.amount)&&typeof t.label==='string'&&t.label.length<=80&&typeof t.note==='string'&&t.note.length<=500&&payments.includes(t.payment)&&(!t.debit||(t.type==='expense'&&t.category==='debit'&&typeof t.debitAccount==='string'&&t.debitAccount.length<=80&&['planned','paid'].includes(t.debitStatus)))}
-function validate(d){if(!d||d.version!==1||!Array.isArray(d.transactions)||!Array.isArray(d.recurring)||d.transactions.length>50000||d.recurring.length>500||!d.budgets||typeof d.budgets!=='object'||Array.isArray(d.budgets))return false;
+function validStocks(d){
+ const stocks=d.stocks??[],events=d.stockEvents??[];
+ return Array.isArray(stocks)&&stocks.length<=5000&&stocks.every(s=>s&&validId(s.id)&&typeof s.name==='string'&&s.name.trim()&&s.name.length<=100&&typeof s.kind==='string'&&s.kind.length>0&&s.kind.length<=40&&typeof s.note==='string'&&s.note.length<=500)&&new Set(stocks.map(s=>s.id)).size===stocks.length&&Array.isArray(events)&&events.length<=50000&&events.every(e=>e&&validId(e.id)&&stocks.some(s=>s.id===e.stockId)&&['dividend','sale'].includes(e.type)&&validDate(e.date)&&validAmount(e.amount)&&typeof e.kind==='string'&&e.kind.length<=40)&&new Set(events.map(e=>e.id)).size===events.length;
+}
+function migrate(input){if(!validate(input))throw Error('Invalid ledger');return {...input,stocks:input.stocks??[],stockEvents:input.stockEvents??[]}}
+function validate(d){if(!d||!validStocks(d)||d.version!==1||!Array.isArray(d.transactions)||!Array.isArray(d.recurring)||d.transactions.length>50000||d.recurring.length>500||!d.budgets||typeof d.budgets!=='object'||Array.isArray(d.budgets))return false;
 if(!d.transactions.every(t=>validEntry(t)&&validDate(t.date)&&(!t.occurrence||typeof t.occurrence==='string'&&/^[\w-]{1,100}@(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(t.occurrence)))||new Set(d.transactions.map(t=>t.id)).size!==d.transactions.length)return false;
 if(!d.recurring.every(t=>validEntry(t)&&Number.isInteger(t.day)&&t.day>=1&&t.day<=31)||new Set(d.recurring.map(t=>t.id)).size!==d.recurring.length)return false;
 return Object.entries(d.budgets).every(([month,limits])=>validMonth(month)&&limits&&typeof limits==='object'&&!Array.isArray(limits)&&Object.entries(limits).every(([id,n])=>categories.some(c=>c.id===id&&c.type==='expense')&&Number.isSafeInteger(n)&&n>=0&&n<=999999999))}
 function applyRecurring(data,month,idFactory){let added=0;for(const rule of data.recurring){const occurrence=rule.id+'@'+month;if(data.transactions.some(t=>t.occurrence===occurrence))continue;const {day,...fields}=rule;data.transactions.push({...fields,id:idFactory(),date:month+'-'+String(Math.min(day,lastDay(month))).padStart(2,'0'),occurrence});added++}return added}
-root.Ledger={categories,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,validate,applyRecurring};
+root.Ledger={categories,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,validStocks,migrate,validate,applyRecurring};
 })(typeof module!=='undefined'?module.exports:window);
