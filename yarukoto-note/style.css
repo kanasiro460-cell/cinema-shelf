@@ -5,3 +5,5 @@
 
 /* Task genres */
 .task-genre{background:#edf3ef;color:#23594d;border-radius:12px;padding:3px 9px;font-size:11px}.quick-add #quick-genre{flex:0 1 120px;min-width:85px;width:auto;margin:0;padding:9px 5px;font-size:12px}.list-tools{flex-wrap:wrap}.list-tools #genre-filter{max-width:180px}@media(max-width:550px){.quick-add{flex-wrap:wrap}.quick-add #quick-title{min-width:100px}.list-tools #genre-filter{max-width:none;flex:1}}
+
+.task-repeat{font-size:11px;color:#23594d;background:#e7efe9;padding:3px 9px;border-radius:12px}.repeat-help{font-size:12px;color:#78867f;line-height:1.8}#repeat-weekdays{border:1px solid var(--line);border-radius:9px;padding:12px;margin:14px 0}#repeat-weekdays legend{font-size:12px}.weekday-options{display:flex;gap:7px;flex-wrap:wrap}.weekday-options label{display:flex;align-items:center;gap:5px;padding:8px;margin:0;min-height:44px}.weekday-options input{width:18px;height:18px;margin:0}
