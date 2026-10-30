@@ -22,3 +22,19 @@ main{max-width:1400px}.task-workspace{display:grid;grid-template-columns:230px m
 main{max-width:none}.task-add-area{width:auto;max-width:none;display:block;flex-shrink:0}.page-heading>div:first-child{flex:1;min-width:0}.task-add-area .add-button{margin:0;width:auto}.task-workspace{grid-template-columns:190px minmax(0,1fr);gap:20px}@media(min-width:901px){main{padding-left:28px;padding-right:28px}}@media(max-width:900px){.task-workspace{grid-template-columns:1fr}}@media(max-width:700px){main{padding-left:16px;padding-right:16px}.page-heading{align-items:flex-start}.task-add-area{width:auto;max-width:none;margin-left:auto}.page-heading h1{font-size:24px}.task-add-area .add-button{font-size:11px;min-height:40px;padding:9px 10px}}
 
 .task-add-area .add-button{font-size:14px;min-height:48px;padding:13px 19px}@media(min-width:371px) and (max-width:900px){.priority-board{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.task-add-area .add-button{font-size:13px;min-height:46px;padding:12px 14px}}
+
+/* Make active high-priority work easy to spot. */
+.task-row.priority-high{background:#fff3e7;border:2px solid #d28b64;border-left:7px solid #ad4b2e;box-shadow:0 3px 10px #924c2512;padding:23px 18px}
+.task-row.priority-high:hover{border-color:#ad4b2e}
+.task-row.priority-high .task-title{color:#71351f;font-size:18px;font-weight:750;line-height:1.7}
+.task-row.priority-high .priority.high{background:#a74229;color:#fff;border-radius:6px;padding:4px 9px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.task-row.priority-high .priority.high i{background:#fff;width:6px;height:6px}
+.task-row.priority-high .task-check>span{border-color:#b96643;border-width:2px}
+.task-row.priority-high .task-note{color:#80634f}
+.priority-group-high .priority-group-heading{background:#a74229;color:#fff;font-weight:700;box-shadow:0 2px 5px #924c251a}
+.priority-group-high .priority-group-heading i{background:#fff}
+.priority-group-high .priority-group-heading b{font-weight:700}
+.priority-group-high .priority-item{background:#fff5eb;border-bottom-color:#edd3ba;padding:12px 8px;border-radius:5px;margin-top:5px}
+.priority-group-high .priority-item strong{color:#71351f;font-weight:700;font-size:14px}
+.priority-group-high .priority-item small{color:#89664c}
+@media(max-width:700px){.task-row.priority-high{padding:22px 13px}.task-row.priority-high .task-title{font-size:18px}.priority-group-high .priority-item strong{font-size:14px}}
