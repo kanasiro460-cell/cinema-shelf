@@ -7,6 +7,7 @@
 - `yarukoto-note/` — やることノート
 - `fuku-note/` — 服ノート
 - `kantei-note/` — 鑑定ノート
+- `manga-note/` — 漫画ノート（作品・巻数・読書状況・評価の管理）
 
 4つのアプリは提供されたZIPの内容をそのまま配置しています。`clothes.html` と `todo.html` は対応する元アプリに移動します。各アプリのCSS・JavaScript・画像・OCRファイルはそれぞれのフォルダ内に保持しています。
 
