@@ -20,3 +20,5 @@ main{max-width:1400px}.task-workspace{display:grid;grid-template-columns:230px m
 
 /* Keep the add button compact and give the task list more room. */
 main{max-width:none}.task-add-area{width:auto;max-width:none;display:block;flex-shrink:0}.page-heading>div:first-child{flex:1;min-width:0}.task-add-area .add-button{margin:0;width:auto}.task-workspace{grid-template-columns:190px minmax(0,1fr);gap:20px}@media(min-width:901px){main{padding-left:28px;padding-right:28px}}@media(max-width:900px){.task-workspace{grid-template-columns:1fr}}@media(max-width:700px){main{padding-left:16px;padding-right:16px}.page-heading{align-items:flex-start}.task-add-area{width:auto;max-width:none;margin-left:auto}.page-heading h1{font-size:24px}.task-add-area .add-button{font-size:11px;min-height:40px;padding:9px 10px}}
+
+.task-add-area .add-button{font-size:14px;min-height:48px;padding:13px 19px}@media(min-width:371px) and (max-width:900px){.priority-board{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.task-add-area .add-button{font-size:13px;min-height:46px;padding:12px 14px}}
