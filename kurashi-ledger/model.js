@@ -15,7 +15,8 @@ const categories=[
 {id:'side',name:'副収入',icon:'wallet',color:'#3e7a60',bg:'#eaf3e9',type:'income'},
 {id:'bonus',name:'賞与',icon:'spark',color:'#3e7a60',bg:'#eaf3e9',type:'income'},
 {id:'otherIncome',name:'その他の収入',icon:'wallet',color:'#3e7a60',bg:'#eaf3e9',type:'income'}];
-const payments=['現金','クレジットカード','銀行口座','電子マネー','その他'];
+const debitNames=['楽天カード支払い','楽天カード固定費','PayPay後払い','三井住友銀行固定費','Amazonカード','Olive支払い'];
+const payments=['現金','クレジットカード','銀行口座','電子マネー','その他',...debitNames];
 const empty=()=>({version:1,transactions:[],budgets:{},recurring:[],stocks:[],stockEvents:[]});
 function validDate(s){if(typeof s!=='string'||!/^20\d{2}-\d{2}-\d{2}$|^2100-\d{2}-\d{2}$/.test(s))return false;const d=new Date(s+'T12:00:00Z');return !isNaN(d)&&d.toISOString().slice(0,10)===s}
 function validMonth(s){return typeof s==='string'&&/^(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(s)}
@@ -40,5 +41,5 @@ if(!d.transactions.every(t=>validEntry(t)&&validDate(t.date)&&(!t.occurrence||ty
 if(!d.recurring.every(t=>validEntry(t)&&Number.isInteger(t.day)&&t.day>=1&&t.day<=31)||new Set(d.recurring.map(t=>t.id)).size!==d.recurring.length)return false;
 return Object.entries(d.budgets).every(([month,limits])=>validMonth(month)&&limits&&typeof limits==='object'&&!Array.isArray(limits)&&Object.entries(limits).every(([id,n])=>categories.some(c=>c.id===id&&c.type==='expense')&&Number.isSafeInteger(n)&&n>=0&&n<=999999999))}
 function applyRecurring(data,month,idFactory){let added=0;for(const rule of data.recurring){const occurrence=rule.id+'@'+month;if(data.transactions.some(t=>t.occurrence===occurrence))continue;const {day,...fields}=rule;data.transactions.push({...fields,id:idFactory(),date:month+'-'+String(Math.min(day,lastDay(month))).padStart(2,'0'),occurrence});added++}return added}
-root.Ledger={categories,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,applyRecurring};
+root.Ledger={categories,debitNames,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,applyRecurring};
 })(typeof module!=='undefined'?module.exports:window);
