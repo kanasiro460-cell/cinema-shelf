@@ -27,11 +27,14 @@ function taskRow(t){const overdue=!t.done&&t.due&&t.due<M.today(),priority={high
 function renderTasks(){renderPriorityBoard();const rows=M.select(data.tasks.filter(task=>(!priorityFilter||task.priority===priorityFilter)&&(!$('#genre-filter').value||task.genre===$('#genre-filter').value)),view,$('#search').value,$('#sort').value);$('#list-total').textContent=rows.length+'件';if(!rows.length){const searching=$('#search').value.trim()||$('#genre-filter').value||priorityFilter,copy=searching?['見つかりませんでした','別の言葉で検索してみてください。']:view==='done'?['「できた」が、ここに増えていく。','終わったやることに、チェックを付けてみましょう。']:view==='today'?['今日のやることは、すっきり。','期限が今日のやることはありません。']:view==='upcoming'?['これからの予定は、まだありません。','期限を付けると、明日以降のやることがここに並びます。']:['まずは、ひとつ書いてみよう。','買い物も、手続きも、自分のための時間も。'];$('#task-list').innerHTML='<div class="empty"><div class="empty-art"><span>✓</span><i></i><i></i><i></i></div><h3>'+copy[0]+'</h3><p>'+copy[1]+'</p>'+(!searching&&view!=='done'?'<button class="text-button" data-new>＋ やることを追加する</button>':'')+'</div>'}else{const active=rows.filter(t=>!t.done),done=rows.filter(t=>t.done);$('#task-list').innerHTML=active.map(taskRow).join('')+(done.length&&view==='all'?'<div class="completed-label">完了したこと <span>'+done.length+'</span></div>':'')+done.map(taskRow).join('')}}
 function shoppingCategoryName(value){return M.shoppingCategories.find(category=>category.id===value)?.name||''}
 for(const selector of ['#task-shopping-category']){const select=$(selector);select.add(new Option('未設定',''));for(const category of M.shoppingCategories)select.add(new Option(category.name,category.id))}
+function renderTaskShoppingOptions(){const selected=$('#task-shopping-category').value;$('#task-shopping-options').innerHTML=[{id:'',name:'未設定'},...M.shoppingCategories].map(category=>'<button type="button" data-task-category="'+category.id+'" aria-pressed="'+(selected===category.id)+'">'+esc(category.name)+'</button>').join('')}
+$('#task-shopping-options').addEventListener('click',e=>{const button=e.target.closest('[data-task-category]');if(!button)return;$('#task-shopping-category').value=button.dataset.taskCategory;renderTaskShoppingOptions()});
 function syncShoppingCategoryFields(){
  const form=$('#task-form'),taskShopping=form.elements.genre.value==='買い物';
- $('#task-shopping-category-label').hidden=!taskShopping;form.elements.shoppingCategory.disabled=!taskShopping;
+ $('#task-shopping-category-label').hidden=!taskShopping;form.elements.shoppingCategory.disabled=!taskShopping;renderTaskShoppingOptions();
 }
 $('#task-form').elements.genre.addEventListener('change',syncShoppingCategoryFields);
+$('#task-form').elements.genre.addEventListener('input',syncShoppingCategoryFields);
 syncShoppingCategoryFields();
 function syncRepeatFields(){$('#repeat-weekdays').hidden=$('#task-repeat').value!=='weekly'}
 $('#task-repeat').onchange=syncRepeatFields;
