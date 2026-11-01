@@ -11,7 +11,7 @@ function render(){
  document.body.dataset.activeView=view;
  $('#today-date').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',month:'long',day:'numeric',weekday:'long'}).format(new Date());
  $('#stat-active').innerHTML=active.length+'<small>件</small>';$('#stat-today').innerHTML=due.length+'<small>件</small>';$('#stat-finished').innerHTML=finished+'<small>件</small>';$('#progress-ring').style.setProperty('--progress',((due.length+finished)?finished/(due.length+finished)*100:0)+'%');
- const counts={all:active.length,today:due.length,done:completed.length,shopping:data.shopping.filter(item=>!item.done).length};Object.keys(counts).forEach(k=>$('#count-'+k).textContent=counts[k]);
+ const counts={all:active.length,today:due.length,done:completed.length};Object.keys(counts).forEach(k=>$('#count-'+k).textContent=counts[k]);
  $$('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});
  $('#priority-board').hidden=shopping||view==='today';$('#task-workspace').hidden=shopping;$('#task-overview').hidden=shopping;$('#task-section').hidden=shopping;$('#shopping-section').hidden=!shopping;
  $('#page-title').textContent=shopping?'買い物を、忘れずに。':'今日を、ひとつずつ。';$('#page-lead').textContent=shopping?'必要なものを、お店ごとにまとめておこう。':'頭の中のやることを、ここに置いておこう。';$('#new-task').textContent=shopping?'＋ 買うものを追加':'＋ やることを追加';
