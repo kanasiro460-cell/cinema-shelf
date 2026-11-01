@@ -9,3 +9,5 @@
 .debit-name-select{display:block;font-size:11px;color:#7a6a86;margin:10px 0 16px}.debit-name-select select{display:block;margin-top:8px;width:100%;max-width:390px;min-height:46px;border:1px solid #d7cce2;border-radius:8px;background:#fff;color:#665078;padding:11px 13px;font-size:14px}.debit-name-select select:focus-visible{outline:3px solid #bba4cd;outline-offset:2px}
 
 .debit-management-summary{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:650px){.debit-management-summary{grid-template-columns:1fr}}
+
+.stock-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0;padding:17px;background:#f7f5f9;border-radius:8px}.stock-details dt{font-size:11px;color:#8a7b95;margin-bottom:8px}.stock-details dd{margin:0;font-size:14px;color:#655078;overflow-wrap:anywhere}@media(max-width:650px){.stock-details{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 13px;padding:15px}}
