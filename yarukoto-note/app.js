@@ -13,7 +13,7 @@ function render(){
  $('#stat-active').innerHTML=active.length+'<small>件</small>';$('#stat-today').innerHTML=due.length+'<small>件</small>';$('#stat-finished').innerHTML=finished+'<small>件</small>';$('#progress-ring').style.setProperty('--progress',((due.length+finished)?finished/(due.length+finished)*100:0)+'%');
  const counts={all:active.length,today:due.length,done:completed.length};Object.keys(counts).forEach(k=>$('#count-'+k).textContent=counts[k]);
  $$('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});
- $('#priority-board').hidden=shopping||view==='today';$('#task-workspace').hidden=shopping;$('#task-overview').hidden=shopping;$('#task-section').hidden=shopping;$('#shopping-section').hidden=!shopping;
+ $('#priority-board').hidden=shopping||view==='today'||view==='done';$('#task-workspace').hidden=shopping;$('#task-overview').hidden=shopping;$('#task-section').hidden=shopping;$('#shopping-section').hidden=!shopping;
  $('#page-title').textContent=shopping?'買い物を、忘れずに。':'今日を、ひとつずつ。';$('#page-lead').textContent=shopping?'必要なものを、お店ごとにまとめておこう。':'頭の中のやることを、ここに置いておこう。';$('#new-task').textContent=shopping?'＋ 買うものを追加':'＋ やることを追加';
  if(shopping){renderShopping();return}
  const labels={all:['すべてのやること','大切なことから、自分のペースで。'],today:['今日のやること','期限が今日のやることに、目を向けよう。'],upcoming:['これからのやること','明日以降の予定を、ゆっくり準備。'],done:['完了したこと','積み重ねた「できた」を、振り返ろう。']};$('#list-title').textContent=labels[view][0];$('#list-description').textContent=labels[view][1];renderTasks()
