@@ -10,6 +10,7 @@ const categories=[
 {id:'fun',name:'趣味・交際費',icon:'coffee',color:'#c0b2c8',bg:'#f4eff6',type:'expense'},
 {id:'education',name:'教育・学び',icon:'book',color:'#b7bd8f',bg:'#f3f4e9',type:'expense'},
 {id:'investment',name:'投資関連',icon:'wallet',color:'#9382b2',bg:'#f1edf8',type:'expense'},
+{id:'smartphone',name:'スマホ関連',icon:'more',color:'#8e9e8b',bg:'#eef3eb',type:'expense'},
 {id:'car',name:'自動車関連',icon:'train',color:'#789aaf',bg:'#eaf2f7',type:'expense'},
 {id:'debit',name:'カード・引き落とし',icon:'card',color:'#8979a6',bg:'#f3eff8',type:'expense'},
 {id:'other',name:'その他の支出',icon:'more',color:'#bfc5bc',bg:'#f0f2ee',type:'expense'},
@@ -43,8 +44,10 @@ if(!d.transactions.every(t=>validEntry(t)&&validDate(t.date)&&(!t.occurrence||ty
 if(!d.recurring.every(t=>validEntry(t)&&Number.isInteger(t.day)&&t.day>=1&&t.day<=31)||new Set(d.recurring.map(t=>t.id)).size!==d.recurring.length)return false;
 return Object.entries(d.budgets).every(([month,limits])=>validMonth(month)&&limits&&typeof limits==='object'&&!Array.isArray(limits)&&Object.entries(limits).every(([id,n])=>categories.some(c=>c.id===id&&c.type==='expense')&&Number.isSafeInteger(n)&&n>=0&&n<=999999999))}
 function isNisaContribution(row){if(row.type!=='expense')return false;if(typeof row.isNisa==='boolean')return row.isNisa;const label=String(row.label||'').normalize('NFKC').replace(/\s/g,'').toUpperCase();return /(?:積立|積み立て|つみたて|つみ立て)NISA|NISA.*(?:積立|積み立て|つみたて|つみ立て)/.test(label)}
-function fixedCostSummary(data){const income=data.recurring.filter(row=>row.type==='income').reduce((sum,row)=>sum+row.amount,0),expenses=data.recurring.filter(row=>row.type==='expense'),expense=expenses.reduce((sum,row)=>sum+row.amount,0),excludedNisa=expenses.filter(isNisaContribution).reduce((sum,row)=>sum+row.amount,0),lineExpense=expense-excludedNisa;return {income,expense,excludedNisa,lineExpense,variableLimit:income-expense,incomeThird:income/3,incomeHalf:income/2,lineDifference:(lineExpense*3-income)/3,preservationDifference:(lineExpense*2-income)/2,hasIncome:income>0,wealthLine:income>0&&lineExpense*3<income,preservationLine:income>0&&lineExpense*2<income}}
+function isInvestmentExpense(row){return row.type==='expense'&&(row.category==='investment'||isNisaContribution(row))}
+function fixedCostSummary(data){const income=data.recurring.filter(row=>row.type==='income').reduce((sum,row)=>sum+row.amount,0),expenses=data.recurring.filter(row=>row.type==='expense'),allExpense=expenses.reduce((sum,row)=>sum+row.amount,0),investmentExpense=expenses.filter(isInvestmentExpense).reduce((sum,row)=>sum+row.amount,0),expense=allExpense-investmentExpense,excludedNisa=expenses.filter(isNisaContribution).reduce((sum,row)=>sum+row.amount,0),lineExpense=expense;return {income,expense,allExpense,investmentExpense,excludedNisa,lineExpense,variableLimit:income-expense,incomeThird:income/3,incomeHalf:income/2,lineDifference:(lineExpense*3-income)/3,preservationDifference:(lineExpense*2-income)/2,hasIncome:income>0,wealthLine:income>0&&lineExpense*3<income,preservationLine:income>0&&lineExpense*2<income}}
+
 
 function applyRecurring(data,month,idFactory){let added=0;for(const rule of data.recurring){const occurrence=rule.id+'@'+month;if(data.transactions.some(t=>t.occurrence===occurrence))continue;const {day,...fields}=rule;data.transactions.push({...fields,id:idFactory(),date:month+'-'+String(Math.min(day,lastDay(month))).padStart(2,'0'),occurrence});added++}return added}
-root.Ledger={categories,debitNames,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,isNisaContribution,fixedCostSummary,applyRecurring};
+root.Ledger={categories,debitNames,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,isNisaContribution,isInvestmentExpense,fixedCostSummary,applyRecurring};
 })(typeof module!=='undefined'?module.exports:window);
