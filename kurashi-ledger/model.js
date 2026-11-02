@@ -9,6 +9,8 @@ const categories=[
 {id:'health',name:'医療・保険',icon:'heart',color:'#d6ad9d',bg:'#fbf0e9',type:'expense'},
 {id:'fun',name:'趣味・交際費',icon:'coffee',color:'#c0b2c8',bg:'#f4eff6',type:'expense'},
 {id:'education',name:'教育・学び',icon:'book',color:'#b7bd8f',bg:'#f3f4e9',type:'expense'},
+{id:'investment',name:'投資関連',icon:'wallet',color:'#9382b2',bg:'#f1edf8',type:'expense'},
+{id:'car',name:'自動車関連',icon:'train',color:'#789aaf',bg:'#eaf2f7',type:'expense'},
 {id:'debit',name:'カード・引き落とし',icon:'card',color:'#8979a6',bg:'#f3eff8',type:'expense'},
 {id:'other',name:'その他の支出',icon:'more',color:'#bfc5bc',bg:'#f0f2ee',type:'expense'},
 {id:'salary',name:'給与',icon:'wallet',color:'#3e7a60',bg:'#eaf3e9',type:'income'},
@@ -29,7 +31,7 @@ const validAmount=n=>Number.isSafeInteger(n)&&n>0&&n<=999999999;
 function nextDebitDate(inputDate){if(!validDate(inputDate))return '';const value=shiftMonth(inputDate.slice(0,7),1)+'-27';return validDate(value)?value:''}
 function parseDebitAmount(value){const text=String(value).normalize('NFKC').replace(/[,\s]/g,'');if(!/^\d+$/.test(text))return null;const amount=Number(text);return validAmount(amount)?amount:null}
 function formatDebitAmount(value){const text=String(value).normalize('NFKC').replace(/[,\s]/g,'');return /^\d+$/.test(text)?text.replace(/^0+(?=\d)/,'').replace(/\B(?=(\d{3})+(?!\d))/g,','):String(value)}
-function validEntry(t){return t&&(t.inputDate===undefined||t.inputDate===''||validDate(t.inputDate))&&validId(t.id)&&['income','expense'].includes(t.type)&&categories.some(c=>c.id===t.category&&c.type===t.type)&&validAmount(t.amount)&&typeof t.label==='string'&&t.label.length<=80&&typeof t.note==='string'&&t.note.length<=500&&payments.includes(t.payment)&&(!t.debit||(t.type==='expense'&&t.category==='debit'&&typeof t.debitAccount==='string'&&t.debitAccount.length<=80&&['planned','paid'].includes(t.debitStatus)))}
+function validEntry(t){return t&&(t.isNisa===undefined||typeof t.isNisa==='boolean')&&(t.inputDate===undefined||t.inputDate===''||validDate(t.inputDate))&&validId(t.id)&&['income','expense'].includes(t.type)&&categories.some(c=>c.id===t.category&&c.type===t.type)&&validAmount(t.amount)&&typeof t.label==='string'&&t.label.length<=80&&typeof t.note==='string'&&t.note.length<=500&&payments.includes(t.payment)&&(!t.debit||(t.type==='expense'&&t.category==='debit'&&typeof t.debitAccount==='string'&&t.debitAccount.length<=80&&['planned','paid'].includes(t.debitStatus)))}
 function validStockDetails(stock){return ['shares','dividendPerShare'].every(key=>stock[key]==null||Number.isFinite(stock[key])&&stock[key]>=0&&stock[key]<=999999999)&&['exDividendDate','dividendPaymentDate'].every(key=>stock[key]===undefined||stock[key]===''||validDate(stock[key]))}
 function validStocks(d){
  const stocks=d.stocks??[],events=d.stockEvents??[];
@@ -40,7 +42,9 @@ function validate(d){if(!d||!validStocks(d)||d.version!==1||!Array.isArray(d.tra
 if(!d.transactions.every(t=>validEntry(t)&&validDate(t.date)&&(!t.occurrence||typeof t.occurrence==='string'&&/^[\w-]{1,100}@(20\d{2}|2100)-(0[1-9]|1[0-2])$/.test(t.occurrence)))||new Set(d.transactions.map(t=>t.id)).size!==d.transactions.length)return false;
 if(!d.recurring.every(t=>validEntry(t)&&Number.isInteger(t.day)&&t.day>=1&&t.day<=31)||new Set(d.recurring.map(t=>t.id)).size!==d.recurring.length)return false;
 return Object.entries(d.budgets).every(([month,limits])=>validMonth(month)&&limits&&typeof limits==='object'&&!Array.isArray(limits)&&Object.entries(limits).every(([id,n])=>categories.some(c=>c.id===id&&c.type==='expense')&&Number.isSafeInteger(n)&&n>=0&&n<=999999999))}
-function fixedCostSummary(data){const income=data.recurring.filter(row=>row.type==='income').reduce((sum,row)=>sum+row.amount,0),expense=data.recurring.filter(row=>row.type==='expense').reduce((sum,row)=>sum+row.amount,0);return {income,expense,variableLimit:income-expense,incomeThird:income/3,lineDifference:(expense*3-income)/3,hasIncome:income>0,wealthLine:income>0&&expense*3<income}}
+function isNisaContribution(row){if(row.type!=='expense')return false;if(typeof row.isNisa==='boolean')return row.isNisa;const label=String(row.label||'').normalize('NFKC').replace(/\s/g,'').toUpperCase();return /(?:積立|積み立て|つみたて|つみ立て)NISA|NISA.*(?:積立|積み立て|つみたて|つみ立て)/.test(label)}
+function fixedCostSummary(data){const income=data.recurring.filter(row=>row.type==='income').reduce((sum,row)=>sum+row.amount,0),expenses=data.recurring.filter(row=>row.type==='expense'),expense=expenses.reduce((sum,row)=>sum+row.amount,0),excludedNisa=expenses.filter(isNisaContribution).reduce((sum,row)=>sum+row.amount,0),lineExpense=expense-excludedNisa;return {income,expense,excludedNisa,lineExpense,variableLimit:income-expense,incomeThird:income/3,incomeHalf:income/2,lineDifference:(lineExpense*3-income)/3,preservationDifference:(lineExpense*2-income)/2,hasIncome:income>0,wealthLine:income>0&&lineExpense*3<income,preservationLine:income>0&&lineExpense*2<income}}
+
 function applyRecurring(data,month,idFactory){let added=0;for(const rule of data.recurring){const occurrence=rule.id+'@'+month;if(data.transactions.some(t=>t.occurrence===occurrence))continue;const {day,...fields}=rule;data.transactions.push({...fields,id:idFactory(),date:month+'-'+String(Math.min(day,lastDay(month))).padStart(2,'0'),occurrence});added++}return added}
-root.Ledger={categories,debitNames,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,fixedCostSummary,applyRecurring};
+root.Ledger={categories,debitNames,payments,empty,validDate,validMonth,shiftMonth,lastDay,monthRows,summarize,validAmount,nextDebitDate,parseDebitAmount,formatDebitAmount,validStockDetails,validStocks,migrate,validate,isNisaContribution,fixedCostSummary,applyRecurring};
 })(typeof module!=='undefined'?module.exports:window);
