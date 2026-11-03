@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const genres=['買い物','勉強','健康管理'];
+const genres=['買い物','勉強','健康管理','行きたいとこ'];
 const priorities={high:0,medium:1};
 const shoppingCategories=[{id:'drugstore',name:'ドラッグストア'},{id:'100yen',name:'100均'},{id:'supermarket',name:'スーパー'},{id:'muji',name:'無印'},{id:'uniqlo',name:'ユニクロ'},{id:'gu',name:'GU'}];
 function today(now=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(now)}
