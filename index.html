@@ -51,8 +51,8 @@ body[data-active-view="arank"] .toolbar{display:grid;grid-template-columns:repea
 (function(root){'use strict';
 const genres=['AV','ドラマ','コメディ','アクション','SF','ファンタジー','ホラー','ミステリー','恋愛','アニメ','ドキュメンタリー','音楽','その他'];
 const subgenres=['痴漢','NTR','不倫','ナンパ','家族','職場'];
-const formats=['U-NEXT','DMM購入','DMMレンタル','DVD','Blu-ray','映画館','配信','テレビ','その他'];
-const availableFormats=formats.slice(0,3);
+const formats=['U-NEXT','DMM購入','DMM購入(総集編)','DMMレンタル','DVD','Blu-ray','映画館','配信','テレビ','その他'];
+const availableFormats=formats.slice(0,4);
 const statuses=['watched','watchlist','watching'];
 const defaults={work:Array.from({length:5},(_,i)=>'作品評価'+(i+1)),special:[...Array.from({length:11},(_,i)=>'特殊項目'+(i+1)),'イキおもらし','ベロキスビクビク','フェラグチュ','涙流し','汗流し','メガネ日焼け'],actress:Array.from({length:5},(_,i)=>'女優評価'+(i+1))};
 const TOTAL_MAX=79,SPECIAL_MAX=34,WORK_ITEM_MAX=[5,5,5,10,5];
