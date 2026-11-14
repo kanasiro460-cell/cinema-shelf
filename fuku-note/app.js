@@ -4,7 +4,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 let data=M.empty(),db,view='items',category='',brandFilter='',subbrandFilter='',favoriteOnly=false,businessFilter=false,rankingMetric='design',editingItem=null,editingOutfit=null,detail=null,selected=new Set(),busy=false,ready=false,loadError=false,timer;
 const garmentPaths={tops:'m27 15-14 8-7 16 13 7 7-10v33h29V36l7 10 13-7-7-16-15-8c-5 7-18 7-26 0z',bottoms:'M23 13h36l5 57H46l-5-35-5 35H18zM23 21h36M40 13v17',dress:'m31 12-7 9 7 15-15 34h49L50 36l7-15-7-9c-4 6-13 6-19 0zM31 36h19',outer:'m29 12-16 8-6 36 14 3 6-24-2 37h34l-2-37 6 24 14-3-6-36-16-8-13 11zM29 12l13 60M55 12 42 72M31 39h-5m29 0h5',shoes:'M12 44v17c0 4 5 7 12 7h42c9 0 13-8 5-12L48 42l-8-12-14 12zM13 59h60M41 42l-7 5m14 1-7 5',bag:'M18 29h46l5 41H13zM28 29V18c0-16 25-16 25 0v11M28 35v4m25-4v4',accessory:'M19 21c0-15 43-15 43 0 0 11-9 19-22 36-13-17-21-25-21-36zM34 55l-8 15h28l-9-15M33 22h15'};
 garmentPaths.reference='M16 10h50v62H16zM24 20h34M24 58h34M24 64h22m6-33 7 5-4 9-4-2v11H31V43l-4 2-4-9 7-5c5 5 17 5 22 0z';
-Object.assign(garmentPaths,{tshirt:garmentPaths.tops,knit:garmentPaths.tops,sweat:garmentPaths.tops,cardigan:garmentPaths.outer});
+Object.assign(garmentPaths,{tshirt:garmentPaths.tops,shirt:garmentPaths.tops,knit:garmentPaths.tops,sweat:garmentPaths.tops,cardigan:garmentPaths.outer});
 function garment(type='tops'){return '<svg class="garment" viewBox="0 0 82 82" aria-hidden="true"><path d="'+garmentPaths[type]+'"/></svg>'}
 function colorLabel(item){return '<span class="item-color"><i style="background:'+M.colors[item.color]+'"></i>'+esc(item.color)+'</span>'}
 function outfitItems(outfit){return outfit.ids.map(id=>data.items.find(item=>item.id===id)).filter(Boolean)}

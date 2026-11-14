@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const categories={bottoms:'ボトムス',tops:'トップス',tshirt:'Tシャツ',knit:'ニット',sweat:'スウェット',cardigan:'カーディガン',outer:'アウター'},colors={'ホワイト':'#eeeae2','ブラック':'#514c4f','グレー':'#a5a1a1','ベージュ':'#cabcaa','ブラウン':'#947869','ネイビー':'#656b82','ブルー':'#9cbdcd','グリーン':'#a6b4a0','ピンク':'#d4b2bc','レッド':'#b87c79','イエロー':'#d8c794','その他':'#b5abc0'},seasons=['春秋','夏','冬'],scenes=['日常','通勤・通学','ビジネス','お出かけ','きれいめ','旅行','その他'];
+const categories={bottoms:'ボトムス',tops:'トップス',tshirt:'Tシャツ',shirt:'シャツ',knit:'ニット',sweat:'スウェット',cardigan:'カーディガン',outer:'アウター'},colors={'ホワイト':'#eeeae2','ブラック':'#514c4f','グレー':'#a5a1a1','ベージュ':'#cabcaa','ブラウン':'#947869','ネイビー':'#656b82','ブルー':'#9cbdcd','グリーン':'#a6b4a0','ピンク':'#d4b2bc','レッド':'#b87c79','イエロー':'#d8c794','その他':'#b5abc0'},seasons=['春秋','夏','冬'],scenes=['日常','通勤・通学','ビジネス','お出かけ','きれいめ','旅行','その他'];
 const ratingItems={design:'デザイン',fit:'サイズ感',material:'素材',matching:'組み合わせ'},ownerships={wanted:'欲しい',unowned:'持ってない',owned:'持ってる'};
 function emptyRatings(){return Object.fromEntries(Object.keys(ratingItems).map(key=>[key,null]))}
 function validRatings(value){return value&&typeof value==='object'&&Object.keys(ratingItems).every(key=>value[key]===null||Number.isInteger(value[key])&&value[key]>=1&&value[key]<=5)}
