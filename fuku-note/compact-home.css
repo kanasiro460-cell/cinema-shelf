@@ -1,0 +1,36 @@
+body[data-active-view="items"] .page-heading {
+  padding: 14px 20px;
+  margin-bottom: 22px;
+}
+
+body[data-active-view="items"] h1 {
+  margin: 4px 0;
+  font-size: 22px;
+  line-height: 1.35;
+}
+
+body[data-active-view="items"] .small-stats {
+  margin-top: 7px;
+}
+
+@media (max-width: 650px) {
+  body[data-active-view="items"] .page-heading {
+    display: block;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+  }
+
+  body[data-active-view="items"] h1 {
+    margin: 3px 0;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  body[data-active-view="items"] .page-heading p {
+    line-height: 1.5;
+  }
+
+  body[data-active-view="items"] .small-stats {
+    margin-top: 6px;
+  }
+}
