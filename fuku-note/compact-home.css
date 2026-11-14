@@ -3,6 +3,10 @@ body[data-active-view="items"] .page-heading {
   margin-bottom: 22px;
 }
 
+body:not([data-active-view="items"]) .home-photo {
+  display: none;
+}
+
 body[data-active-view="items"] h1 {
   margin: 4px 0;
   font-size: 22px;
@@ -13,9 +17,19 @@ body[data-active-view="items"] .small-stats {
   margin-top: 7px;
 }
 
+body[data-active-view="items"] .home-photo {
+  width: 38%;
+  max-width: 360px;
+  aspect-ratio: 2 / 1;
+  margin: 0;
+  transform: none;
+}
+
 @media (max-width: 650px) {
   body[data-active-view="items"] .page-heading {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 112px;
+    align-items: center;
     padding: 12px 14px;
     margin-bottom: 18px;
   }
@@ -32,5 +46,15 @@ body[data-active-view="items"] .small-stats {
 
   body[data-active-view="items"] .small-stats {
     margin-top: 6px;
+  }
+
+  body[data-active-view="items"] .home-photo {
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 1.35;
+  }
+
+  body[data-active-view="items"] .home-photo img {
+    object-position: 68% center;
   }
 }
