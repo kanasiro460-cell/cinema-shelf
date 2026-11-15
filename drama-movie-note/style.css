@@ -13,3 +13,5 @@
 .book-card .book-author{font-size:14px}.book-card .book-kind{font-size:13px}
 
 .book-card .score-chips span{font-size:13px}.book-card .status-pill{font-size:13px}.rating-fields label,.check-options label{font-size:14px}
+
+.book-card,.ranking-row{cursor:pointer}
