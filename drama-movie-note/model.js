@@ -1,5 +1,5 @@
 (function(root){'use strict';
-const types=['ドラマ','映画'],genres=['恋愛','ヒューマン','コメディ','ミステリー','サスペンス','アクション','SF','ファンタジー','ホラー','時代劇','医療','刑事','青春','家族','音楽','その他'],ratingLabels=['物語','キャスト','演技','音楽','満足度'];
+const types=['ドラマ','映画','アニメ'],genres=['恋愛','ヒューマン','コメディ','ミステリー','サスペンス','アクション','SF','ファンタジー','ホラー','時代劇','医療','刑事','青春','家族','音楽','その他'],ratingLabels=['物語','キャスト','演技','音楽','満足度'];
 const score=value=>value===null||Number.isInteger(value)&&value>=1&&value<=5;
 const total=ratings=>{const entered=ratings.filter(value=>value!==null);return entered.length?entered.reduce((sum,value)=>sum+value,0):null};
 function validWork(work){return !!(work&&typeof work.id==='string'&&/^[\w-]{1,100}$/.test(work.id)&&typeof work.title==='string'&&work.title.trim()&&work.title.length<=120&&types.includes(work.type)&&(work.year===null||Number.isInteger(work.year)&&work.year>=1900&&work.year<=2100)&&genres.includes(work.genre)&&Array.isArray(work.ratings)&&work.ratings.length===5&&work.ratings.every(score)&&work.totalScore===total(work.ratings)&&typeof work.completed==='boolean'&&typeof work.theater==='boolean'&&typeof work.favorite==='boolean'&&typeof work.note==='string'&&work.note.length<=2000&&Number.isFinite(work.createdAt)&&Number.isFinite(work.updatedAt))}
