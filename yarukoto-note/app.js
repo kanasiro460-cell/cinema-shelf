@@ -11,12 +11,12 @@ function render(){
  document.body.dataset.activeView=view;
  $('#today-date').textContent=new Intl.DateTimeFormat('ja-JP',{timeZone:'Asia/Tokyo',month:'long',day:'numeric',weekday:'long'}).format(new Date());
  $('#stat-active').innerHTML=active.length+'<small>件</small>';$('#stat-today').innerHTML=due.length+'<small>件</small>';$('#stat-finished').innerHTML=finished+'<small>件</small>';$('#progress-ring').style.setProperty('--progress',((due.length+finished)?finished/(due.length+finished)*100:0)+'%');
- const counts={all:active.length,today:due.length,done:completed.length};Object.keys(counts).forEach(k=>$('#count-'+k).textContent=counts[k]);
+ const counts={all:active.length,today:due.length,high:active.filter(t=>t.priority==='high').length,medium:active.filter(t=>t.priority==='medium').length};Object.keys(counts).forEach(k=>$('#count-'+k).textContent=counts[k]);
  $$('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});
- $('#priority-board').hidden=shopping||view==='today'||view==='done';$('#task-workspace').hidden=shopping;$('#task-overview').hidden=shopping;$('#task-section').hidden=shopping;$('#shopping-section').hidden=!shopping;
+ $('#priority-board').hidden=shopping||view==='today'||view==='high'||view==='medium';$('#task-workspace').hidden=shopping;$('#task-overview').hidden=shopping;$('#task-section').hidden=shopping;$('#shopping-section').hidden=!shopping;
  $('#page-title').textContent=shopping?'買い物を、忘れずに。':'今日を、ひとつずつ。';$('#page-lead').textContent=shopping?'必要なものを、お店ごとにまとめておこう。':'頭の中のやることを、ここに置いておこう。';$('#new-task').textContent=shopping?'＋ 買うものを追加':'＋ やることを追加';
  if(shopping){renderShopping();return}
- const labels={all:['すべてのやること','大切なことから、自分のペースで。'],today:['今日のやること','期限が今日のやることに、目を向けよう。'],upcoming:['これからのやること','明日以降の予定を、ゆっくり準備。'],done:['完了したこと','積み重ねた「できた」を、振り返ろう。']};$('#list-title').textContent=labels[view][0];$('#list-description').textContent=labels[view][1];renderTasks()
+ const labels={all:['すべてのやること','大切なことから、自分のペースで。'],today:['今日のやること','期限が今日のやることに、目を向けよう。'],high:['優先度が高いやること','先に取りかかりたいことを確認しよう。'],medium:['優先度が普通のやること','いつものペースで進めたいこと。']};$('#list-title').textContent=labels[view][0];$('#list-description').textContent=labels[view][1];renderTasks()
 }
 function renderPriorityBoard(){
  const names={high:'高い',medium:'ふつう'},active=data.tasks.filter(task=>!task.done&&(view!=='today'||task.due===M.today()));
@@ -38,7 +38,7 @@ $('#task-form').elements.genre.addEventListener('input',syncShoppingCategoryFiel
 syncShoppingCategoryFields();
 function syncRepeatFields(){$('#repeat-weekdays').hidden=$('#task-repeat').value!=='weekly'}
 $('#task-repeat').onchange=syncRepeatFields;
-function openEditor(id){editing=id||null;const task=data.tasks.find(t=>t.id===id),f=$('#task-form');f.reset();$('#task-complete-label').hidden=!task;f.elements.done.checked=task?.done||false;$('#form-error').textContent='';$('#dialog-title').textContent=task?'やることを編集':'やることを追加';if(task)for(const key of ['title','due','priority','note','genre','shoppingCategory'])f.elements[key].value=task[key]??'';else if(view==='today')f.elements.due.value=M.today();if(!task)f.elements.genre.value=$('#genre-filter').value;f.elements.repeat.value=task?.repeat||'none';for(const input of f.querySelectorAll('[name=weekday]'))input.checked=(task?.weekdays||[]).includes(Number(input.value));syncRepeatFields();syncShoppingCategoryFields();$('#task-dialog').showModal();f.elements.title.focus({preventScroll:true})}
+function openEditor(id){editing=id||null;const task=data.tasks.find(t=>t.id===id),f=$('#task-form');f.reset();$('#task-complete-label').hidden=!task;f.elements.done.checked=task?.done||false;$('#form-error').textContent='';$('#dialog-title').textContent=task?'やることを編集':'やることを追加';if(task)for(const key of ['title','due','priority','note','genre','shoppingCategory'])f.elements[key].value=task[key]??'';else if(view==='today')f.elements.due.value=M.today();if(!task){f.elements.genre.value=$('#genre-filter').value;if(view==='high'||view==='medium')f.elements.priority.value=view}f.elements.repeat.value=task?.repeat||'none';for(const input of f.querySelectorAll('[name=weekday]'))input.checked=(task?.weekdays||[]).includes(Number(input.value));syncRepeatFields();syncShoppingCategoryFields();$('#task-dialog').showModal();f.elements.title.focus({preventScroll:true})}
 $('#new-task').onclick=()=>view==='shopping'?openShoppingEditor():openEditor();$('#close-editor').onclick=$('#cancel-editor').onclick=()=>$('#task-dialog').close();
 function tasksWithCompletion(tasks,task,checked){
  if(checked&&!task.done&&(task.repeat==='daily'||task.repeat==='weekly')){
