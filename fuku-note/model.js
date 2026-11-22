@@ -3,7 +3,7 @@ const categories={bottoms:'ボトムス',tshirt:'Tシャツ',shirt:'シャツ',k
 const ratingItems={design:'デザイン',fit:'サイズ感',material:'素材',matching:'組み合わせ'},ownerships={wanted:'欲しい',unowned:'持ってない',owned:'持ってる'};
 function emptyRatings(){return Object.fromEntries(Object.keys(ratingItems).map(key=>[key,null]))}
 function validRatings(value){return value&&typeof value==='object'&&Object.keys(ratingItems).every(key=>value[key]===null||Number.isInteger(value[key])&&value[key]>=1&&value[key]<=5)}
-const brands=['ユニクロ','ニードルス','GU'],subbrands=['ユニクロC','ユニクロU','ユニクロ'],referenceSources=['八田エミリ'];
+const brands=['ユニクロ','ニードルス','GU'],subbrands=['ユニクロC','ユニクロU','ユニクロ'],referenceSources=['八田エミリ','チャッピー'];
 function brandGroup(value){const key=value.normalize('NFKC').replace(/\s/g,'').toUpperCase();if(/^(UNIQLO|ユニクロ)(C|U)?$/.test(key))return 'ユニクロ';if(key==='NEEDLES'||key==='ニードルス')return 'ニードルス';if(key==='GU')return 'GU';return value.trim()}
 function validDate(value){if(value==='')return true;if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||value<'1900-01-01'||value>'2200-12-31')return false;const day=new Date(value+'T00:00:00Z');return Number.isFinite(+day)&&day.toISOString().slice(0,10)===value}
 function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
